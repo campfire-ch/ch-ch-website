@@ -7,6 +7,7 @@ export const menuStore = atom<MenuResponse[]>([]);
 export const footerMenuStore = atom<MenuResponse[]>([]);
 export const currentPaths = atom<MenuItem[]>([]);
 export const activeNavItem = atom<string | null>(null);
+
 export const useMenuStore = async () => {
   if (menuStore.get().length === 0) {
     console.log("no menu store, fetching");

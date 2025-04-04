@@ -1,16 +1,6 @@
 import type { Publication } from "~/core/types/publicationsTypes";
 import path from "path";
 
-const checkIsElection = (title: string): boolean => {
-  // Logic to determine if the publication is an election. Unfortunatly Livingdocs does not provide a flag for this.
-  return [
-    `Wahlen ${process.env.ELECTION_YEAR}`,
-    `Elections ${process.env.ELECTION_YEAR}`,
-    `Elezioni ${process.env.ELECTION_YEAR}`,
-    `Elecziuns ${process.env.ELECTION_YEAR}`,
-  ].some((election) => title.includes(election));
-};
-
 export const getElectionLabel = (locale: string) => {
   switch (locale) {
     case "de":
@@ -21,30 +11,58 @@ export const getElectionLabel = (locale: string) => {
       return `elezioni${process.env.ELECTION_YEAR}`;
     case "rm":
       return `elecziuns${process.env.ELECTION_YEAR}`;
+    case "en":
+      return `elections${process.env.ELECTION_YEAR}`;
     default:
       return `wahlen${process.env.ELECTION_YEAR}`;
   }
+};
+
+const checkIsElection = (title: string, publication: Publication): boolean => {
+  const electionKeywords = [
+    `Wahlen ${process.env.ELECTION_YEAR}`,
+    `Elections ${process.env.ELECTION_YEAR}`,
+    `Elezioni ${process.env.ELECTION_YEAR}`,
+    `Elecziuns ${process.env.ELECTION_YEAR}`,
+    `Elezioni federali ${process.env.ELECTION_YEAR}`,
+    `Élections fédérales ${process.env.ELECTION_YEAR}`,
+    `Bundesratswahlen ${process.env.ELECTION_YEAR}`,
+    `ch.ch elections ${process.env.ELECTION_YEAR}`,
+  ];
+
+  const titlesToCheck = [
+    publication?.systemdata?.title || '',
+    publication?.metadata?.title || '',
+    title
+  ];
+
+  const isElection = titlesToCheck.some(checkTitle => 
+    electionKeywords.some(keyword => checkTitle.includes(keyword))
+  );
+
+  return isElection;
 };
 
 export const transformPublicationsToHomeRoutes = (
   publications: Publication[]
 ) => {
   return publications.map((publication: Publication) => {
-    // Extract values from publication
-    const name = publication?.metadata?.title || "";
-    const isElection = checkIsElection(publication?.systemdata?.title);
+    const title = publication?.metadata?.title || publication?.systemdata?.title || "";
+    const isElection = checkIsElection(title, publication);
+    
     const routePath = isElection
       ? `/${publication?.metadata?.language?.locale}/${getElectionLabel(
           publication?.metadata?.language?.locale
         )}`
       : `/${publication?.metadata?.language?.locale}`;
+    
     const documentId = publication?.systemdata?.documentId;
     const groupId = publication?.metadata?.language?.groupId;
     const language = publication?.metadata?.language?.locale;
     const rootDir = path.resolve(__dirname, "../");
-
+    
     return {
-      name: name,
+      name: title,
       path: routePath,
       file: isElection
         ? `${rootDir}/pages/election/index.vue`

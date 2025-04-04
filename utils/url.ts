@@ -1,6 +1,6 @@
-import type { MenuNode } from "~/generate/types/routingTypes";
-import { getIsoCodeFromLocale } from "./locale";
-import type { MinimizedPublicationType } from "~/core/types/publicationsTypes";
+import type {PathType} from "~/generate/types/routingTypes";
+import {getIsoCodeFromLocale} from "./locale";
+import type {MinimizedPublicationType} from "~/core/types/publicationsTypes";
 
 export const electionSlugs: Record<string, string> = {
     de: `wahlen${process.env.ELECTION_YEAR}`,
@@ -42,28 +42,9 @@ export const makeSlug = (title: string): string => {
     return slug;
 };
 
-export const getDocumentPath = (
-    documentId: number,
-    menu: { nodes: any[] }
-): any[] => {
-    let documentPath: any[] = [];
-    const crawlMenu = (nodes: any[], path: any[]): void => {
-        for (const entry of nodes) {
-            if (entry.nodes && entry.nodes.length > 0) {
-                crawlMenu(entry.nodes, path.concat([entry]));
-            } else if (documentId === parseInt(entry.documentId)) {
-                documentPath = path.concat([entry]);
-                break;
-            }
-        }
-    };
-    crawlMenu(menu.nodes, []);
-    return documentPath;
-};
-
 export const buildUrlFromPublication = (
     publication: MinimizedPublicationType | undefined,
-    path: MenuNode[] = [],
+    path: PathType[] = [],
     isElection: boolean = false
 ): string => {
     if (!publication) {
@@ -90,31 +71,5 @@ export const buildUrlFromPublication = (
         // Remove any colons from the URL
         return url.replace(/:/g, "");
     }
-    return "/asödf"
-};
-export const buildUrlFromPath = (
-    locale: string,
-    path: { label: string }[],
-    isElection: boolean
-): string => {
-    const pathSlug = makeNavigationPath(path);
-    const electionPath = isElection ? electionSlugs[locale] + "/" : "";
-    return `/${locale}/${electionPath}${pathSlug}`;
-};
-
-export const getBaseUrl = (): string | undefined => {
-    const url = process.env.URL;
-
-    // for some strange reason, in dev mode, we need to check if url
-    // is truthy
-    if (url && url.endsWith("/")) {
-        return url;
-    }
-
-    return url ? url + "/" : undefined;
-};
-
-export const getUriFromNode = (node: MenuNode) => {
-    if (node.type === "uri") return node.uri;
-    return buildUrlFromPublication(node.document, [node]);
+    return "/"
 };

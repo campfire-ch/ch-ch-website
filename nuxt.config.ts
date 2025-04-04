@@ -13,10 +13,10 @@ export default defineNuxtConfig({
   ],
 
   site: {
-    url: "https://ch.ch",
-    name: "ch.ch",
-    trailingSlash: false,
-  },
+        url: "https://ch.ch",
+        name: "ch.ch",
+        trailingSlash: false,
+    },
 
   typescript: {
     tsConfig: {
@@ -121,43 +121,13 @@ export default defineNuxtConfig({
 
   i18n: {
     strategy: "no_prefix",
-    lazy: true,
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: "i18n_redirected",
     },
     defaultLocale: "de",
     langDir: "lang/",
-    locales: [{
-      code: "de",
-      name: "German",
-      file: "de.json",
-      cms: "de-CH",
-    },
-    {
-      code: "fr",
-      name: "French",
-      file: "fr.json",
-      cms: "fr-CH",
-    },
-    {
-      code: "it",
-      name: "Italian",
-      file: "it.json",
-      cms: "it-CH",
-    },
-    {
-      code: "rm",
-      name: "Romansh",
-      file: "rm.json",
-      cms: "rm-CH",
-    },
-    {
-      code: "en",
-      name: "English",
-      file: "en.json",
-      cms: "en",
-    }],
+    locales: i18nLocales,
   },
 
   app: {
