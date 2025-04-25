@@ -27,7 +27,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    "/**": { isr: true },
+    "/**": { static: true },
   },
 
   hooks: {
@@ -51,6 +51,12 @@ export default defineNuxtConfig({
 
       publicationRoutes.forEach((route) => {
         routes.push(route);
+      });
+
+      routes.push({
+        name: "catch-all",
+        path: "/:pathMatch(.*)*",
+        file: `${__dirname}/pages/404.vue`,
       });
     },
   },

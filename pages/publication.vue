@@ -2,7 +2,10 @@
 import type { Publication } from "~/core/types/publicationsTypes";
 import {  getPublicationById } from "~/generate/store/publicationStore";
 import { contentComponents } from "~/utils/contentComponentsHandler";
-
+import localeMiddleware from '~/middleware/locale-detection.global';
+definePageMeta({
+  middleware: localeMiddleware,
+});
 const router = useRouter();
 const startItemId = router.currentRoute.value.meta.id as string;
 

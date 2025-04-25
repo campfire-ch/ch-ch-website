@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import localeMiddleware from '~/middleware/locale-detection.global';
+definePageMeta({
+  middleware: localeMiddleware,
+});
 const searchValue = ref<string>('');
 const route = useRoute();
 route.query.q ? searchValue.value = route.query.q as string : searchValue.value = '';

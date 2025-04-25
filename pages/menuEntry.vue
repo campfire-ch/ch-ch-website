@@ -2,7 +2,10 @@
 import {useStore} from "@nanostores/vue";
 import {currentPaths} from "~/generate/store/menuStore";
 import {computed} from "vue";
-
+import localeMiddleware from '~/middleware/locale-detection.global';
+definePageMeta({
+  middleware: localeMiddleware,
+});
 const router = useRouter();
 const {locale} = useI18n();
 const startItemId = router.currentRoute.value.meta.id as string;
@@ -28,6 +31,7 @@ useHead({
   <colored-layout
       class="color-index"
       right-color="layout-blue"
+      footer-color="white"
       division-mode="halves"
       :show-fader="true"
       :isElection="router.currentRoute.value.meta.isElection as boolean"

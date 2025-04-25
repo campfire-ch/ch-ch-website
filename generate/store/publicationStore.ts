@@ -83,7 +83,7 @@ export const getCommunePages = async () => {
         phoneNumber: publication.metadata.phoneNumber,
         website: publication.metadata.website,
       }));
-    communePagesStore.set(communePagesMetadata);
+    communePagesStore.set(communePagesMetadata as CommuneMetadata[]);
     return communePagesMetadata;
   }
   return communePagesStore.get();

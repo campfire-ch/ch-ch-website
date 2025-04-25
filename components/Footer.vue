@@ -22,21 +22,21 @@ const toggleFooterIsOpen = () => {
 };
 
 const footerData = await useAsyncData("footerStore", async () => {
-  let footerDataStore = await getFooterMenuStoreByLanguage( locale.value, props.isElection);
+  let footerDataStore = await getFooterMenuStoreByLanguage(locale.value, props.isElection);
   if (!footerDataStore) {
     return []
   }
 
   footerDataStore.nodes = footerDataStore.nodes.map((node) => {
-  const route = router.find((route) => route.meta.id === node.documentId);
-      if (route) {
-        node.url = route.path;
-      } else {
-        node.url = "";
-      }
-      return node;
-    });
-    return footerDataStore;
+    const route = router.find((route) => route.meta.id === node.documentId);
+    if (route) {
+      node.url = route.path;
+    } else {
+      node.url = "";
+    }
+    return node;
+  });
+  return footerDataStore;
 });
 
 const links = () => {
@@ -64,30 +64,56 @@ const lastLink = () => {
     target: node.target ? node.target : "_self",
   };
 };
+
+const footerClasses = computed(() => {
+  const classes = [
+    "sticky bottom-0 left-0 z-20 pt-8 border-t h-36 px-9 -mt-36",
+    
+    isOpen.value ? 'w-full border-gray-600' : 'border-transparent',
+    !isOpen.value ? '' : '',
+    
+    !isOpen.value && props.divisionMode === 'fifths' ? 'lg:w-2/5' : '',
+    !isOpen.value && props.divisionMode === 'halves' ? 'lg:w-1/2' : '',
+    
+    !isOpen.value && props.color !== 'white' ? `bg-primary-${props.color}` : '',
+    !isOpen.value && props.color !== 'white' && props.color !== 'yellow' ? 'text-primary-white' : '',
+    !isOpen.value && props.color === 'yellow' ? 'text-gray-900' : '',
+    !isOpen.value && props.color === 'red' ? 'text-primary-white' : '',
+    
+    (isOpen.value || props.color === 'white') ? 'bg-primary-white text-primary-blue' : '',
+  ].filter(Boolean);
+  
+  return classes;
+});
+
+const contentWrapperClasses = computed(() => {
+  return isOpen.value ? 'w-1/2 justify-start' : 'w-full justify-start';
+});
+
+const logoContainerClasses = computed(() => {
+  return [
+    'logo-container',
+    isOpen.value ? 'ml-8' : 'xl:ml-8'
+  ];
+});
+
+const linksSectionClasses = computed(() => {
+  if (isOpen.value) {
+    return 'lg:flex lg:self-start lg:justify-between lg:w-1/2 lg:px-4 lg:pt-[6px] xl:pr-24';
+  } else {
+    return 'flex lg:justify-between w-full lg:hidden mt-8 lg:mt-0 flex-wrap gap-4 lg:flex-nowrap';
+  }
+});
 </script>
+
 <template>
   <footer
-  :class="[
-      isOpen ? 'w-full border-gray-600' : 'border-transparent',
-      !isOpen ? 'pb-[10.75rem]' : '',
-      props.divisionMode === 'fifths' && !isOpen ? 'lg:w-2/5' : '',
-      props.divisionMode === 'halves' && !isOpen ? 'lg:w-1/2' : '',
-      props.color !== 'white' && !isOpen ? `bg-primary-${props.color}` : '',
-      props.color !== 'white' && props.color !== 'yellow' && !isOpen
-        ? 'text-primary-white'
-        : '',
-      props.color === 'yellow' && !isOpen ? 'text-gray-900' : '',
-      props.color === 'red' && !isOpen ? ' text-primary-white' : '',
-      props.color === 'white' || isOpen
-        ? 'bg-primary-white text-primary-blue'
-        : '',
-    ]"
-    class="sticky bottom-0 left-0 z-20 pt-8 border-t xl:pb-10 h-36 px-9 -mt-36"
+    :class="footerClasses"
     :aria-label="$t('footerAriaDesktop')"
   >
     <div class="flex flex-col lg:flex-row">
       <div
-        :class="isOpen ? 'w-1/2 justify-start' : 'w-full justify-start'"
+        :class="contentWrapperClasses"
         class="flex self-start flex-col lg:flex-row"
       >
         <button
@@ -101,24 +127,16 @@ const lastLink = () => {
             :name="isOpen ? 'arrow-up' : 'arrow-down'"
           />
         </button>
-        <div class="logo-container" :class="isOpen ? 'ml-8' : ['xl:ml-8']">
+        <div :class="logoContainerClasses">
           <svg-icon class="w-48 h-16" name="logoCH" aria-hidden="true" />
         </div>
-        <p
-          class="xl:ml-8 footer-claim text-footer-claim-fluid xl:pt-[0.625rem] block pt-[0.625rem]"
-        >
+        <p class="xl:ml-8 footer-claim text-footer-claim-fluid xl:pt-[0.625rem] block pt-[0.625rem]">
           {{ isElection ? $t("electionFooterClaim") : $t("footerclaim") }}
         </p>
       </div>
-      <div
-        :class="
-          isOpen
-            ? 'lg:flex lg:self-start lg:justify-between lg:w-1/2 lg:px-4 lg:pt-[6px] xl:pr-24'
-            : 'flex lg:justify-between w-full lg:hidden mt-8 lg:mt-0 flex-wrap gap-4 lg:flex-nowrap'
-        "
-      >
-      <div>
-  </div>
+      
+      <div :class="linksSectionClasses">
+        <div></div>
         <a
           v-for="link in links()"
           :key="link.name"

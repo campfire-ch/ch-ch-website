@@ -4,7 +4,11 @@ import { useStore } from "@nanostores/vue";
 import { currentPaths } from "~/generate/store/menuStore";
 import { getKeyedPublications, getOtherPages } from "~/generate/store/publicationStore";
 import { getCarouselItems } from "~/components/HomeCarousel/utils/homeCarouselUtils";
+import localeMiddleware from '~/middleware/locale-detection.global';
 
+definePageMeta({
+  middleware: localeMiddleware,
+});
 
 const currentPathsStore = useStore(currentPaths);
 const router = useRouter();
@@ -48,7 +52,7 @@ const { data: carouselItems } = await useAsyncData(async () => {
       <div v-if="currentPathsStore.length > 0" class="hidden lg:block">
         <sub-navigation-desktop />
       </div>
-      <div class="h-full flex-1" v-show="carouselItems && currentPathsStore.length < 1">
+      <div class="h-full flex-1" v-show="carouselItems !== undefined && currentPathsStore.length < 1">
         <home-carousel class="h-full" :carousel-items="carouselItems!" />
       </div>
     </template>
