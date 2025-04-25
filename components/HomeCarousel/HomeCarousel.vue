@@ -5,7 +5,7 @@ import { onSlideChange } from "./utils/homeCarouselUtils";
 import { Swiper, SwiperSlide } from "swiper/vue";
 
 const props = defineProps<{
-    carouselItems: CarouselItem[];
+    carouselItems: CarouselItem[] | null;
 }>();
 
 const swiperRef = ref<any>(null);
@@ -41,7 +41,7 @@ const onSwiper = (swiperInstance: any) => {
 
 <template>
     <!-- Only show the Swiper if showSwiper is true -->
-    <div v-if="showSwiper" class="home-carousel">
+    <div v-if="showSwiper && carouselItems" class="home-carousel">
         <Swiper :modules="[
             SwiperAutoplay,
             SwiperEffectCreative,

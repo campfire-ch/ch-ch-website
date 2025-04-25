@@ -33,8 +33,9 @@ const { data: homePageData } = await useAsyncData(async () => {
 const { data: carouselItems } = await useAsyncData(async () => {
   if (homePageData.value?.content?.[0]?.containers?.right?.[0]?.containers?.carousel) {
     const carouselItems = await getCarouselItems(homePageData.value?.content?.[0]?.containers?.right?.[0]?.containers?.carousel)
-    return carouselItems;
+    return carouselItems || [];
   }
+  return [];
 })
 
 
@@ -52,8 +53,8 @@ const { data: carouselItems } = await useAsyncData(async () => {
       <div v-if="currentPathsStore.length > 0" class="hidden lg:block">
         <sub-navigation-desktop />
       </div>
-      <div class="h-full flex-1" v-show="carouselItems !== undefined && currentPathsStore.length < 1">
-        <home-carousel class="h-full" :carousel-items="carouselItems!" />
+      <div class="h-full flex-1" v-show="carouselItems && carouselItems.length > 0 && currentPathsStore.length < 1">
+        <home-carousel class="h-full" :carousel-items="carouselItems" />
       </div>
     </template>
   </colored-layout>
